@@ -76,7 +76,10 @@ io.on("connection", (socket) => {
     } else if (password === passwords.lapline) {
       socket.emit("loginResult", "lapline");
     } else {
-      socket.emit("loginResult", "invalid");
+      setTimeout(() => {
+        socket.emit("loginResult", "invalid");
+      }, 500);
+      
     }
 
     socket.on("disconnect", () => {

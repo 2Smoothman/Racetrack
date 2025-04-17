@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 
-import checkPw from '../components/CheckPw';
+
 
 
 
@@ -21,10 +21,12 @@ function FrontDeskLogin() {
     const socket = useContext(SocketContext);
     const [password, setPassword] = useState("");
     const [loginStatus, setLoginStatus] = useState(null);
+    const [isChecking, setChecking] = useState(false);
 
     const loginClick = (event) => {
         event.preventDefault();
-        if (socket) {
+        if (socket && !isChecking) {
+            setChecking(true);
             socket.emit("checkPassword", password);
         }
         
@@ -35,6 +37,7 @@ function FrontDeskLogin() {
         if (!socket) return;
 
         socket.on("loginResult", (role) => {
+            setChecking(false);
             if (role === "frontdesk") {
                 navigate("/front-desk");
             } else {
@@ -50,44 +53,27 @@ function FrontDeskLogin() {
         
   
 
-    return (
-        <div className="container">
-            <form onSubmit={loginClick}>
-            {loginStatus === null ? (
-                <div>
-                <div className="login">
-                    <input 
-                    type="text" 
-                    placeholder="password" 
-                    id="loginInput" 
-                    defaultValue={""} 
-                    onChange={e => setPassword(e.target.value)} 
-                    />
-                    <button type="submit">Login</button>
+            return (
+                <div className="container">
+                  <form onSubmit={loginClick}>
+                    <div className="login">
+                      <input 
+                        type="text" 
+                        placeholder="password" 
+                        id="loginInput" 
+                        value={password} 
+                        onChange={e => setPassword(e.target.value)} 
+                      />
+                      <button type="submit" disabled={isChecking}>
+                        {isChecking ? "Checking..." : "Login"}
+                      </button>
+                    </div>
+                    <div>
+                      <Link to="/" className="bbutton">Back to the main page</Link>
+                    </div>
+                  </form>
                 </div>
-                <div>
-                    <Link to="/" className="bbutton">Back to the main page</Link>
-                </div>
-                </div>
-            ) : loginStatus === "frontdesk" ? (
-                <div className='front desk'>
-                   <FrontDesk/>
-                </div>
-            ) : loginStatus === "invalid" ? (
-                <div className='invalid'>
-                    <div>Enter valid password</div>
-                    <Link to="/" className="bbutton">Back to the main page</Link>
-                </div>
-            ) : (
-                <div className='invalid'>
-                    <div>Unexpected error. Please try again.</div>
-                    <Link to="/" className="bbutton">Back to the main page</Link>
-                </div>
-
-            )}
-            </form>
-        </div>
-    );
+              );
     
 }
 
