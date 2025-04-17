@@ -88,6 +88,7 @@ function LeaderBoard() {
           </div>
         )}
       </div>
+      <div className="bottom-area">
       <div className="leader-board-container">
         {!currentSession && "No active sessions."}
         {currentSession &&
@@ -102,6 +103,7 @@ function LeaderBoard() {
         <Link reloadDocument to="/" className="bbutton" id="linkback">
           Back to the main page
         </Link>
+      </div>
       </div>
     </div>
   );
